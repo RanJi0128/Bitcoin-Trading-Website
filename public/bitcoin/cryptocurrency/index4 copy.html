@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" type="image/png" sizes="16x16" href="../assets/images/favicon.png">
+        <title>Elite Admin Template - The Ultimate Multipurpose admin template</title>
+        <link href="../assets/node_modules/datatables.net-bs4/css/dataTables.bootstrap4.css" rel="stylesheet">
+        <link href="../assets/node_modules/morrisjs/morris.css" rel="stylesheet">
+        <link href="../assets/node_modules/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css" rel="stylesheet">
+        <link href="../assets/node_modules/bootstrap-datepicker/bootstrap-datepicker.min.css" rel="stylesheet" type="text/css" />
+        <link href="../assets/node_modules/timepicker/bootstrap-timepicker.min.css" rel="stylesheet">
+        <link href="../assets/node_modules/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+        <link href="../assets/node_modules/c3-master/c3.min.css" rel="stylesheet">
+        <link href="dist1/css/style.min.css" rel="stylesheet">
+        <link href="dist1/css/pages/dashboard4.css" rel="stylesheet">
+        <link href="dist1/css/pages/widget-page.css" rel="stylesheet">
+        <style>
+                .show-ranges {
+                    right:10px !important;
+                    left:auto  !important;
+                    position:absolute;
+                }
+                body{
+                    font-family:"Times New Roman";
+                }
+                #myTable td{padding:5px;line-height:28px;text-align:center;}
+        
+                #his td, #his th{
+                    padding:5px;
+                }
+        </style>
+        <script src="../assets/node_modules/jquery/jquery-3.2.1.min.js"></script>
+        <script src="../assets/node_modules/popper/popper.min.js"></script>
+        <script src="../assets/node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script>
+            $( document ).ready(function() {
+            //var daterange='<?php echo $daterange;?>';
+            var daterange='08/04/2019 - 08/05/2019';
+            var myarr = daterange.split(" - ");
+            var start = myarr[0];
+                var end = myarr[1];
+                function cb(start, end) {
+                    $('#reportrange input').val(start.format('MM/DD/YYYY') + ' - ' + end.format('MM/DD/YYYY'));
+                }
+                $('#reportrange').daterangepicker({
+                    startDate: start,
+                    endDate: end,
+                    ranges: {
+                    'Today': [moment(), moment()],
+                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                    'This Month': [moment().startOf('month'), moment().endOf('month')],
+                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    }
+                }, cb);
+                $('#reportrange input').val(start + ' - ' + end);
+                $('#reportrange').on('apply.daterangepicker', function(ev, picker) {
+                  //  go();
+                });
+            // http://www.daterangepicker.com/#usage
+            });
+            var timer_cnt=0;
+            var timestamp=0;
+            var mytimer= setInterval(myFunction, 1000);
+            function myFunction(){
+                timer_cnt++;
+                /************************ */
+                timestamp++;
+                date=new Date(timestamp*1000);
+                var year = date.getFullYear();
+                var month =date.getMonth()+1;
+                var day = date.getDate();
+                var hours = date.getHours();
+                var minutes = "0" + date.getMinutes();
+                var seconds = "0" + date.getSeconds();
+                var convdatetime = month+'-'+day+'-'+year+' '+hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+                //document.getElementById("cdt").innerHTML=convdatetime;
+                /************************ */
+                if(timer_cnt!=10)return;
+                timer_cnt=0;
+            }        
+            function go(){
+                myform.action="{{url($selected)}}";
+                myform.submit();
+            }
+
+            function go1(){
+                myform.action="{{url('/')}}";
+                myform.submit();
+            }
+
+            function go2(){
+                myform.action="{{url('transaction')}}";
+                myform.submit();
+            }
+        </script>
+    </head>
+    <body class="horizontal-nav skin-megna fixed-layout">
+        <!-- ============================================================== -->
+        <!-- Preloader - style you can find in spinners.css -->
+        <!-- ============================================================== -->
+        <div class="preloader">
+            <div class="loader">
+                <div class="loader__figure"></div>
+                <p class="loader__label">Elite admin</p>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- Main wrapper - style you can find in pages.scss -->
+        <!-- ============================================================== -->
+        <div id="main-wrapper">
+            <header class="topbar">
+                <nav class="navbar top-navbar navbar-expand-md navbar-dark">
+                    <!-- ============================================================== -->
+                    <!-- Logo -->
+                    <!-- ============================================================== -->
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="index.html">
+                            <!-- Logo icon -->
+                            <b>
+                                <img src="../assets/images/logo-icon.png" alt="homepage" class="dark-logo" />
+                                <!-- Light Logo icon -->
+                                <img src="../assets/images/logo-light-icon.png" alt="homepage" class="light-logo" />
+                            </b>
+                            <span class="hidden-sm-down">
+                                <!-- dark Logo text -->
+                                <img src="../assets/images/logo-text.png" alt="homepage" class="dark-logo" />
+                                <!-- Light Logo text -->    
+                                <img src="../assets/images/logo-light-text.png" class="light-logo" alt="homepage" />
+                            </span>
+                        </a>
+                    </div>
+                    <div class="navbar-collapse">
+                        <ul class="navbar-nav mr-auto">
+                            <!-- This is  -->
+                            <li class="nav-item"> <a class="nav-link nav-toggler d-block d-md-none waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a> </li>
+                            <li class="nav-item"> <a class="nav-link sidebartoggler d-none waves-effect waves-dark" href="javascript:void(0)"><i class="icon-menu"></i></a> </li>
+                            <!-- ============================================================== -->
+                            <!-- Search -->
+                            <!-- ============================================================== -->
+                            <li class="nav-item">
+                                <form class="app-search d-none d-md-block d-lg-block">
+                                    <input type="text" class="form-control" placeholder="Search & enter">
+                                </form>
+                            </li>
+                        </ul>
+                        <!-- ============================================================== -->
+                        <!-- User profile and search -->
+                        <!-- ============================================================== -->
+                        <ul  class="navbar-nav my-lg-0">
+                            <!-- ============================================================== -->
+                            <!-- Comment -->
+                            <!-- ============================================================== -->
+                            <li  style="display:none" class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="ti-email"></i>
+                                    <div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right mailbox animated bounceInDown">
+                                    <ul>
+                                        <li>
+                                            <div class="drop-title">Notifications</div>
+                                        </li>
+                                        <li>
+                                            <div class="message-center">
+                                                <!-- Message -->
+                                                <a href="javascript:void(0)">
+                                                    <div class="btn btn-danger btn-circle"><i class="fa fa-link"></i></div>
+                                                    <div class="mail-contnet">
+                                                        <h5>Luanch Admin</h5>
+                                                        <span class="mail-desc">Just see the my new admin!</span> <span class="time">9:30 AM</span> 
+                                                    </div>
+                                                </a>
+                                                <!-- Message -->
+                                                <a href="javascript:void(0)">
+                                                    <div class="btn btn-success btn-circle"><i class="ti-calendar"></i></div>
+                                                    <div class="mail-contnet">
+                                                        <h5>Event today</h5>
+                                                        <span class="mail-desc">Just a reminder that you have event</span> <span class="time">9:10 AM</span> 
+                                                    </div>
+                                                </a>
+                                                <!-- Message -->
+                                                <a href="javascript:void(0)">
+                                                    <div class="btn btn-info btn-circle"><i class="ti-settings"></i></div>
+                                                    <div class="mail-contnet">
+                                                        <h5>Settings</h5>
+                                                        <span class="mail-desc">You can customize this template as you want</span> <span class="time">9:08 AM</span> 
+                                                    </div>
+                                                </a>
+                                                <!-- Message -->
+                                                <a href="javascript:void(0)">
+                                                    <div class="btn btn-primary btn-circle"><i class="ti-user"></i></div>
+                                                    <div class="mail-contnet">
+                                                        <h5>Pavan kumar</h5>
+                                                        <span class="mail-desc">Just see the my admin!</span> <span class="time">9:02 AM</span> 
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <a class="nav-link text-center link" href="javascript:void(0);"> <strong>Check all notifications</strong> <i class="fa fa-angle-right"></i> </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li style="display:none" class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" id="2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="icon-note"></i>
+                                    <div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>
+                                </a>
+                                <div class="dropdown-menu mailbox dropdown-menu-right animated bounceInDown" aria-labelledby="2">
+                                    <ul>
+                                        <li>
+                                            <div class="drop-title">You have 4 new messages</div>
+                                        </li>
+                                        <li>
+                                            <div class="message-center">
+                                                <!-- Message -->
+                                                <a href="javascript:void(0)">
+                                                    <div class="user-img"> <img src="../assets/images/users/1.jpg" alt="user" class="img-circle"> <span class="profile-status online pull-right"></span> </div>
+                                                    <div class="mail-contnet">
+                                                        <h5>Pavan kumar</h5>
+                                                        <span class="mail-desc">Just see the my admin!</span> <span class="time">9:30 AM</span> 
+                                                    </div>
+                                                </a>
+                                                <!-- Message -->
+                                                <a href="javascript:void(0)">
+                                                    <div class="user-img"> <img src="../assets/images/users/2.jpg" alt="user" class="img-circle"> <span class="profile-status busy pull-right"></span> </div>
+                                                    <div class="mail-contnet">
+                                                        <h5>Sonu Nigam</h5>
+                                                        <span class="mail-desc">I've sung a song! See you at</span> <span class="time">9:10 AM</span> 
+                                                    </div>
+                                                </a>
+                                                <!-- Message -->
+                                                <a href="javascript:void(0)">
+                                                    <div class="user-img"> <img src="../assets/images/users/3.jpg" alt="user" class="img-circle"> <span class="profile-status away pull-right"></span> </div>
+                                                    <div class="mail-contnet">
+                                                        <h5>Arijit Sinh</h5>
+                                                        <span class="mail-desc">I am a singer!</span> <span class="time">9:08 AM</span> 
+                                                    </div>
+                                                </a>
+                                                <!-- Message -->
+                                                <a href="javascript:void(0)">
+                                                    <div class="user-img"> <img src="../assets/images/users/4.jpg" alt="user" class="img-circle"> <span class="profile-status offline pull-right"></span> </div>
+                                                    <div class="mail-contnet">
+                                                        <h5>Pavan kumar</h5>
+                                                        <span class="mail-desc">Just see the my admin!</span> <span class="time">9:02 AM</span> 
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <a class="nav-link text-center link" href="javascript:void(0);"> <strong>See all e-Mails</strong> <i class="fa fa-angle-right"></i> </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li style="display:none" class="nav-item dropdown mega-dropdown">
+                                <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ti-layout-width-default"></i></a>
+                                <div class="dropdown-menu animated bounceInDown">
+                                    <ul class="mega-dropdown-menu row">
+                                        <li class="col-lg-3 col-xlg-2 m-b-30">
+                                            <h4 class="m-b-20">CAROUSEL</h4>
+                                            <!-- CAROUSEL -->
+                                            <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                                                <div class="carousel-inner" role="listbox">
+                                                    <div class="carousel-item active">
+                                                        <div class="container"> <img class="d-block img-fluid" src="../assets/images/big/img1.jpg" alt="First slide"></div>
+                                                    </div>
+                                                    <div class="carousel-item">
+                                                        <div class="container"><img class="d-block img-fluid" src="../assets/images/big/img2.jpg" alt="Second slide"></div>
+                                                    </div>
+                                                    <div class="carousel-item">
+                                                        <div class="container"><img class="d-block img-fluid" src="../assets/images/big/img3.jpg" alt="Third slide"></div>
+                                                    </div>
+                                                </div>
+                                                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev"> <span class="carousel-control-prev-icon" aria-hidden="true"></span> <span class="sr-only">Previous</span> </a>
+                                                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next"> <span class="carousel-control-next-icon" aria-hidden="true"></span> <span class="sr-only">Next</span> </a>
+                                            </div>
+                                            <!-- End CAROUSEL -->
+                                        </li>
+                                        <li class="col-lg-3 m-b-30">
+                                            <h4 class="m-b-20">ACCORDION</h4>
+                                            <div class="accordion" id="accordionExample">
+                                                <div class="card m-b-0">
+                                                    <div class="card-header bg-white p-0" id="headingOne">
+                                                        <h5 class="mb-0">
+                                                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                            Collapsible Group Item #1
+                                                            </button>
+                                                        </h5>
+                                                    </div>
+                                                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+                                                        <div class="card-body">
+                                                            Anim pariatur cliche reprehenderit, enim eiusmod high.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card m-b-0">
+                                                    <div class="card-header bg-white p-0" id="headingTwo">
+                                                        <h5 class="mb-0">
+                                                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false"
+                                                                aria-controls="collapseTwo">
+                                                            Collapsible Group Item #2
+                                                            </button>
+                                                        </h5>
+                                                    </div>
+                                                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+                                                        <div class="card-body">
+                                                            Anim pariatur cliche reprehenderit, enim eiusmod high.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="card m-b-0">
+                                                    <div class="card-header bg-white p-0" id="headingThree">
+                                                        <h5 class="mb-0">
+                                                            <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false"
+                                                                aria-controls="collapseThree">
+                                                            Collapsible Group Item #3
+                                                            </button>
+                                                        </h5>
+                                                    </div>
+                                                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordionExample">
+                                                        <div class="card-body">
+                                                            Anim pariatur cliche reprehenderit, enim eiusmod high.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li class="col-lg-3  m-b-30">
+                                            <h4 class="m-b-20">CONTACT US</h4>
+                                            <!-- Contact -->
+                                            <form>
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" id="exampleInputname1" placeholder="Enter Name"> 
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="email" class="form-control" placeholder="Enter email"> 
+                                                </div>
+                                                <div class="form-group">
+                                                    <textarea class="form-control" id="exampleTextarea" rows="3" placeholder="Message"></textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-info">Submit</button>
+                                            </form>
+                                        </li>
+                                        <li class="col-lg-3 col-xlg-4 m-b-30">
+                                            <h4 class="m-b-20">List style</h4>
+                                            <!-- List style -->
+                                            <ul class="list-style-none">
+                                                <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> You can give link</a></li>
+                                                <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> Give link</a></li>
+                                                <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> Another Give link</a></li>
+                                                <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> Forth link</a></li>
+                                                <li><a href="javascript:void(0)"><i class="fa fa-check text-success"></i> Another fifth link</a></li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <!-- ============================================================== -->
+                            <!-- End mega menu -->
+                            <!-- ============================================================== -->
+                            <!-- ============================================================== -->
+                            <!-- User Profile -->
+                            <!-- ============================================================== -->
+                            <li style="display:none" class="nav-item dropdown u-pro">
+                                <a class="nav-link dropdown-toggle waves-effect waves-dark profile-pic" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="../assets/images/users/1.jpg" alt="user" class=""> <span class="hidden-md-down">Mark &nbsp;<i class="fa fa-angle-down"></i></span> </a>
+                                <div class="dropdown-menu dropdown-menu-right animated flipInY">
+                                    <!-- text-->
+                                    <a href="javascript:void(0)" class="dropdown-item"><i class="ti-user"></i> My Profile</a>
+                                    <!-- text-->
+                                    <a href="javascript:void(0)" class="dropdown-item"><i class="ti-wallet"></i> My Balance</a>
+                                    <!-- text-->
+                                    <a href="javascript:void(0)" class="dropdown-item"><i class="ti-email"></i> Inbox</a>
+                                    <!-- text-->
+                                    <div class="dropdown-divider"></div>
+                                    <!-- text-->
+                                    <a href="javascript:void(0)" class="dropdown-item"><i class="ti-settings"></i> Account Setting</a>
+                                    <!-- text-->
+                                    <div class="dropdown-divider"></div>
+                                    <!-- text-->
+                                    <a href="login.html" class="dropdown-item"><i class="fa fa-power-off"></i> Logout</a>
+                                    <!-- text-->
+                                </div>
+                            </li>
+                            <!-- ============================================================== -->
+                            <!-- End User Profile -->
+                            <!-- ============================================================== -->
+                            <li class="nav-item right-side-toggle"> <a class="nav-link  waves-effect waves-light" href="javascript:void(0)"><i class="ti-settings"></i></a></li>
+                        </ul>
+                    </div>
+                </nav>
+            </header>
+            <!-- ============================================================== -->
+            <!-- End Topbar header -->
+            <!-- ============================================================== -->
+            <!-- ============================================================== -->
+            <!-- Left Sidebar - style you can find in sidebar.scss  -->
+            <!-- ============================================================== -->
+            <aside class="left-sidebar">
+                    <!-- Sidebar scroll-->
+                    <div class="scroll-sidebar">
+                        <!-- Sidebar navigation-->
+                        <nav class="sidebar-nav">
+                            <ul id="sidebarnav">
+
+                                <li class="nav-small-cap">--- PERSONAL</li>
+                                <li>
+                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="icon-speedometer"></i><span class="hide-menu">Home<span class="badge badge-pill badge-cyan ml-auto">4</span></span></a>
+                                </li>
+                                <li style="float:left;">
+                                    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="ti-layout-grid2"></i><span class="hide-menu">Transaction</span></a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <!-- End Sidebar navigation -->
+                    </div>
+                    <!-- End Sidebar scroll-->
+                </aside>
+
+      
+            <div class="page-wrapper">
+                <div class="container-fluid">
+                    <div class="row page-titles">
+                        <div class="col-md-5 align-self-center">
+                            <h4 class="text-themecolor">Dashboard 1</h4>
+                        </div>
+                        <div class="col-md-7 align-self-center text-right">
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <ul id="webticker-5">
+                                        <li><i class="cc BTC"></i><span class="text-info"> BTC </span><span class="text-warning"> $11.039232</span></li>
+                                        <li><i class="cc ETH"></i><span class="text-info"> ETH </span><span class="text-warning"> $1.2792</span></li>
+                                        <li><i class="cc GAME"></i><span class="text-info"> GAME </span><span class="text-warning"> $11.039232</span></li>
+                                        <li><i class="cc LBC"></i> <span class="text-info"> LBC </span><span class="text-warning"> $0.588418</span></li>
+                                        <li><i class="cc NEO"></i><span class="text-info"> NEO </span><span class="text-warning"> $161.511</span></li>
+                                        <li><i class="cc STEEM"></i><span class="text-info"> STE </span><span class="text-warning"> $0.551955</span></li>
+                                        <li><i class="cc LTC"></i><span class="text-info"> LIT </span><span class="text-warning"> $177.80</span></li>
+                                        <li><i class="cc NOTE"></i><span class="text-info"> NOTE </span><span class="text-warning"> $13.399</span></li>
+                                        <li><i class="cc MINT"></i><span class="text-info"> MINT </span><span class="text-warning"> $0.880694</span></li>
+                                        <li><i class="cc IOTA"></i><span class="text-info"> IOT </span><span class="text-warning"> $2.555</span></li>
+                                        <li><i class="cc DASH"></i><span class="text-info"> DAS </span><span class="text-warning"> $769.22</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <!-- Column -->
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">TOTAL VISIT</h5>
+                                    <div class="d-flex no-block align-items-center m-t-20 m-b-20">
+                                        <div id="sparklinedash"></div>
+                                        <div class="ml-auto">
+                                            <h2 class="text-success"><i class="ti-arrow-up"></i> <span class="counter">8659</span></h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="sparkline8" class="sparkchart"></div>
+                            </div>
+                        </div>
+                        <!-- Column -->
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">TOTAL PAGE VIEWS</h5>
+                                    <div class="d-flex no-block align-items-center m-t-20 m-b-20">
+                                        <div id="sparklinedash2"></div>
+                                        <div class="ml-auto">
+                                            <h2 class="text-purple"><i class="ti-arrow-up"></i> <span class="counter">7469</span></h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="sparkline8" class="sparkchart"></div>
+                            </div>
+                        </div>
+                        <!-- Column -->
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">UNIQUE VISITOR</h5>
+                                    <div class="d-flex no-block align-items-center m-t-20 m-b-20">
+                                        <div id="sparklinedash3"></div>
+                                        <div class="ml-auto">
+                                            <h2 class="text-info"><i class="ti-arrow-up"></i> <span class="counter">6011</span></h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="sparkline8" class="sparkchart"></div>
+                            </div>
+                        </div>
+                        <!-- Column -->
+                        <!-- Column -->
+                        <div class="col-lg-3 col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">BOUNCE RATE</h5>
+                                    <div class="d-flex no-block align-items-center m-t-20 m-b-20">
+                                        <div id="sparklinedash4"></div>
+                                        <div class="ml-auto">
+                                            <h2 class="text-danger"><i class="ti-arrow-down"></i> <span class="counter">18%</span></h2>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="sparkline8" class="sparkchart"></div>
+                            </div>
+                        </div>
+                        <!-- Column -->
+                    </div>
+                    <div class="card-group">
+                        <!-- card -->
+                        <div class="card">
+                                <div class="card-header">
+                                    Amount Usd And Bitcoin
+                                    <div class="card-actions">
+                                        <a class="" data-action="collapse"><i class="ti-minus"></i></a>
+                                        <a class="btn-minimize" data-action="expand"><i class="mdi mdi-arrow-expand"></i></a>
+                                    </div>
+                                </div>
+                                <div class="card-body collapse show">
+                                        <canvas id="chLine"  style="height:260px; width:100%;"></canvas>
+                                        <ul class="list-inline m-t-30 text-center font-12">
+                                                <li><i class="fa fa-circle text-primary"></i> Bitcoin</li>
+                                                <li><i class="fa fa-circle text-dark"></i> Amount_Usd </li>
+                                            </ul>
+                                </div>
+                        </div>
+                        <!-- card -->
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex m-b-30 no-block">
+                                    <h4 class="card-title m-b-0 align-self-center">Invest</h4>
+                                    <div class="ml-auto">
+                                        <select class="custom-select border-0">
+                                            <option selected="">Today</option>
+                                            <option value="1">Tomorrow</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <canvas id="chLine1"  style="height:260px; width:100%;"></canvas>
+                                <ul class="list-inline m-t-30 text-center font-12">
+                                    <li><i class="fa fa-circle text-primary"></i> Bitcoin</li>
+                                    <li><i class="fa fa-circle text-dark"></i> Amount_Usd </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- card -->
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex m-b-30 no-block">
+                                    <h4 class="card-title m-b-0 align-self-center">Invest</h4>
+                                    <div class="ml-auto">
+                                        <select class="custom-select border-0">
+                                            <option selected="">Today</option>
+                                            <option value="1">Tomorrow</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <canvas id="chLine2"  style="height:260px; width:100%;"></canvas>
+                                <ul class="list-inline m-t-30 text-center font-12">
+                                    <li><i class="fa fa-circle text-primary"></i> Bitcoin</li>
+                                    <li><i class="fa fa-circle text-dark"></i> Amount_Usd </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Crypto Market</h4>
+                                    <div class="table-responsive m-t-20">
+                                        <table id="cc-table" class="table table-bordered table-striped" data-page-length='10'>
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-center">Date</th>
+                                                    <th class="text-center">Time(h)</th>
+                                                    <th class="text-center">Bitcoin</th>
+                                                    <th class="text-center">Amount(Usd)</th>
+                                                    <th class="text-center">Amount(from_owner=exchange)</th>
+                                                    <th class="text-center">Amount(to_owner=exchange)</th>
+                                                    <th class="text-center">Timestamp</th>
+                                                    <th class="text-center">Readable DateTime)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                    <td class="text-center">
+                                                        <div class="label label-table label-info">xxxxxxxxx</div>
+                                                    </td>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                    <td class="text-center">
+                                                        <div class="label label-table label-info">xxxxxxxxx</div>
+                                                    </td>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                    <td class="text-center">
+                                                        <div class="label label-table label-info">xxxxxxxxx</div>
+                                                    </td>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                    <td class="text-center">xxxxxxxxx</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right-sidebar">
+                        <div class="slimscrollright">
+                            <div class="rpanel-title"> Service Panel <span><i class="ti-close right-side-toggle"></i></span> </div>
+                            <div class="r-panel-body">
+                                <ul id="themecolors" class="m-t-20">
+                                    <li><b>With Light sidebar</b></li>
+                                    <li><a href="javascript:void(0)" data-skin="skin-default" class="default-theme">1</a></li>
+                                    <li><a href="javascript:void(0)" data-skin="skin-green" class="green-theme">2</a></li>
+                                    <li><a href="javascript:void(0)" data-skin="skin-red" class="red-theme">3</a></li>
+                                    <li><a href="javascript:void(0)" data-skin="skin-blue" class="blue-theme">4</a></li>
+                                    <li><a href="javascript:void(0)" data-skin="skin-purple" class="purple-theme">5</a></li>
+                                    <li><a href="javascript:void(0)" data-skin="skin-megna" class="megna-theme working">6</a></li>
+                                    <li class="d-block m-t-30"><b>With Dark sidebar</b></li>
+                                    <li><a href="javascript:void(0)" data-skin="skin-default-dark" class="default-dark-theme ">7</a></li>
+                                    <li><a href="javascript:void(0)" data-skin="skin-green-dark" class="green-dark-theme">8</a></li>
+                                    <li><a href="javascript:void(0)" data-skin="skin-red-dark" class="red-dark-theme">9</a></li>
+                                    <li><a href="javascript:void(0)" data-skin="skin-blue-dark" class="blue-dark-theme">10</a></li>
+                                    <li><a href="javascript:void(0)" data-skin="skin-purple-dark" class="purple-dark-theme">11</a></li>
+                                    <li><a href="javascript:void(0)" data-skin="skin-megna-dark" class="megna-dark-theme ">12</a></li>
+                                </ul>
+                                <ul class="m-t-20 chatonline">
+                                    <li><b>Chat option</b></li>
+                                    <li>
+                                        <a href="javascript:void(0)"><img src="../assets/images/users/1.jpg" alt="user-img" class="img-circle"> <span>Varun Dhavan <small class="text-success">online</small></span></a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)"><img src="../assets/images/users/2.jpg" alt="user-img" class="img-circle"> <span>Genelia Deshmukh <small class="text-warning">Away</small></span></a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)"><img src="../assets/images/users/3.jpg" alt="user-img" class="img-circle"> <span>Ritesh Deshmukh <small class="text-danger">Busy</small></span></a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)"><img src="../assets/images/users/4.jpg" alt="user-img" class="img-circle"> <span>Arijit Sinh <small class="text-muted">Offline</small></span></a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)"><img src="../assets/images/users/5.jpg" alt="user-img" class="img-circle"> <span>Govinda Star <small class="text-success">online</small></span></a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)"><img src="../assets/images/users/6.jpg" alt="user-img" class="img-circle"> <span>John Abraham<small class="text-success">online</small></span></a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)"><img src="../assets/images/users/7.jpg" alt="user-img" class="img-circle"> <span>Hritik Roshan<small class="text-success">online</small></span></a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:void(0)"><img src="../assets/images/users/8.jpg" alt="user-img" class="img-circle"> <span>Pwandeep rajan <small class="text-success">online</small></span></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="footer">
+                © 2019 Eliteadmin by themedesigner.in
+            </footer>
+        </div>
+
+        <script src="dist/js/waves.js"></script>
+        <script src="dist1/js/sidebarmenu.js"></script>
+        <script src="dist1/js/custom.min.js"></script>
+        <script src="dist1/js/jquery.webticker.min.js"></script>
+        <script src="dist1/js/fastclick.js"></script>
+        <script src="dist1/js/web-ticker.js"></script>        
+        <script src="../assets/node_modules/skycons/skycons.js"></script>
+        <script src="../assets/node_modules/raphael/raphael-min.js"></script>
+        <script src="../assets/node_modules/morrisjs/morris.min.js"></script>
+        <script src="../assets/node_modules/jquery-sparkline/jquery.sparkline.min.js"></script>
+        <script src="../assets/node_modules/d3/d3.min.js"></script>
+        <script src="../assets/node_modules/c3-master/c3.min.js"></script>
+        <script src="../assets/node_modules/Chart.js/Chart.min.js"></script>
+        <script src="../assets/node_modules/datatables/datatables.min.js"></script>
+        <script src="../assets/node_modules/moment/moment.js"></script>
+        <script src="../assets/node_modules/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js"></script>
+        <script src="../assets/node_modules/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
+        <script src="../assets/node_modules/bootstrap-daterangepicker/daterangepicker.js"></script>
+        <script>
+            $( document ).ready(function() {
+                $('#cc-table').DataTable({
+                "displayLength": 10
+                });
+            
+                var ctx = document.getElementById('chLine').getContext('2d');
+                var myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ["A","A","A","A","A",],
+                        datasets: [{
+                            label: "bitcoin",
+                            yAxisID: 'A',
+                            data:[12,34,32,67,98],
+                            backgroundColor: [
+                                'rgba(0, 255, 0, 0.2)',
+                            ],
+                            borderColor: [
+                                'rgba(255, 0, 0, 1)'
+                            ],
+                            borderWidth: 2
+                        },
+                        {
+                            label: "Amount_Usd",
+                            yAxisID: 'B',
+                            data:[122,34,72,67,34],
+                            backgroundColor: [
+                                'rgba(255, 0, 0, 0.2)',
+                            ],
+                            borderColor: [
+                                'rgba(0, 255, 0, 1)'
+                            ],
+                            borderWidth:2
+                        }]
+                    },
+                    options: {
+                    scales: {
+                        yAxes: [{
+                            id: 'A',
+                            type: 'linear',
+                            position: 'left',
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Bitcoin'
+                            }
+                        }, {
+                            id: 'B',
+                            type: 'linear',
+                            position: 'right',
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Amount_Usd'
+                            }               
+                        }],
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                fontColor: "white",
+                                boxWidth: 20,
+                                padding: 20
+                            }
+                        }
+                    }
+                    }
+                });
+            
+                var year=['a','a','a','a','a','a','a'];
+                ctx1 = document.getElementById('chLine1').getContext('2d');
+                var myChart1 = new Chart(ctx1, {
+                    type: 'line',
+                    data: {
+                        labels: ["A","A","A","A","A",],
+                        datasets: [{
+                            label: "bitcoin",
+                            yAxisID: 'A',
+                            data:[12,34,32,67,98],
+                            backgroundColor: [
+                                'rgba(0, 255, 0, 0.2)',
+                            ],
+                            borderColor: [
+                                'rgba(255, 0, 0, 1)'
+                            ],
+                            borderWidth: 2
+                        },
+                        {
+                            label: "Amount_Usd_from",
+                            yAxisID: 'B',
+                            data:[122,34,72,67,34],
+                            backgroundColor: [
+                                'rgba(255, 0, 0, 0.2)',
+                            ],
+                            borderColor: [
+                                'rgba(0, 255, 0, 1)'
+                            ],
+                            borderWidth:2
+                        }]
+                    },
+                    options: {
+                    scales: {
+                        yAxes: [{
+                            id: 'A',
+                            type: 'linear',
+                            position: 'left',
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Bitcoin'
+                            }
+                        }, {
+                            id: 'B',
+                            type: 'linear',
+                            position: 'right',
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Amount_Usd_from'
+                            }               
+                        }],
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                fontColor: "white",
+                                boxWidth: 20,
+                                padding: 20
+                            }
+                        }
+                    }
+                    }
+                });
+            
+                ctx2 = document.getElementById('chLine2').getContext('2d');
+                var myChart2 = new Chart(ctx2, {
+                    type: 'line',
+                    data: {
+                        labels: ["A","A","A","A","A",],
+                        datasets: [{
+                            label: "bitcoin",
+                            yAxisID: 'A',
+                            data:[12,34,32,67,98],
+                            backgroundColor: [
+                                'rgba(0, 255, 0, 0.2)',
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 3
+                        },
+                        {
+                            label: "Amount_Usd",
+                            yAxisID: 'B',
+                            data:[122,34,72,67,34],
+                            backgroundColor: [
+                                'rgba(255, 0, 0, 0.2)',
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth:3
+                        }]
+                    },
+                    options: {
+                    scales: {
+                        yAxes: [{
+                            id: 'A',
+                            type: 'linear',
+                            position: 'left',
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Bitcoin'
+                            }
+                        }, {
+                            id: 'B',
+                            type: 'linear',
+                            position: 'right',
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Amount_Usd'
+                            }               
+                        }],
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                fontColor: "white",
+                                boxWidth: 20,
+                                padding: 20
+                            }
+                        }
+                    }
+                    }
+                });
+            });      
+        </script>
+    </body>
+</html>
